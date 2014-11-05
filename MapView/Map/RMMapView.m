@@ -1430,7 +1430,7 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if ( ! decelerate)
-        [self completeMoveEventAfterDelay:0];
+        [self completeMoveEventAfterDelay:0.1];
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
@@ -1441,12 +1441,12 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    [self completeMoveEventAfterDelay:0];
+    [self completeMoveEventAfterDelay:0.1];
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    [self completeMoveEventAfterDelay:0];
+    [self completeMoveEventAfterDelay:0.1];
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
@@ -4051,4 +4051,10 @@
                      }];
 }
 
+#pragma mark -
+#pragma mark YunTOP
+
+- (CGPoint)accumulatedD {
+    return _accumulatedDelta;
+}
 @end

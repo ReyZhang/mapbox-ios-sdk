@@ -104,18 +104,21 @@
 {
     coordinate = aCoordinate;
     self.projectedLocation = [[mapView projection] coordinateToProjectedPoint:aCoordinate];
-    self.position = [mapView projectedPointToPixel:self.projectedLocation];
-
+    
+    CGPoint p = [mapView projectedPointToPixel:self.projectedLocation];
+    CGPoint f = mapView.accumulatedD;
+    
+    self.position = CGPointMake(p.x - f.x, p.y - f.y);
     if (!self.hasBoundingBox)
         self.projectedBoundingBox = RMProjectedRectMake(self.projectedLocation.x, self.projectedLocation.y, 1.0, 1.0);
-
+    
     [self.quadTreeNode performSelector:@selector(annotationDidChangeBoundingBox:) withObject:self];
 }
 
 - (void)setMapView:(RMMapView *)aMapView
 {
     mapView = aMapView;
-
+    
     if (!aMapView)
         self.layer = nil;
 }
@@ -123,7 +126,7 @@
 - (void)setPosition:(CGPoint)aPosition animated:(BOOL)animated
 {
     position = aPosition;
-
+    
     if (layer)
         [layer setPosition:aPosition animated:animated];
 }
@@ -146,15 +149,15 @@
 - (void)setLayer:(RMMapLayer *)aLayer
 {
     CALayer *superLayer = [layer superlayer];
-
+    
     if (layer != aLayer)
     {
         if (layer.superlayer)
             [layer removeFromSuperlayer];
-
-         layer = nil;
+        
+        layer = nil;
     }
-
+    
     if (aLayer)
     {
         layer = aLayer;
@@ -215,26 +218,26 @@
 - (void)setBoundingBoxFromLocations:(NSArray *)locations
 {
     CLLocationCoordinate2D min, max;
-	min.latitude = kRMMaxLatitude; min.longitude = kRMMaxLongitude;
-	max.latitude = kRMMinLatitude; max.longitude = kRMMinLongitude;
-
+    min.latitude = kRMMaxLatitude; min.longitude = kRMMaxLongitude;
+    max.latitude = kRMMinLatitude; max.longitude = kRMMinLongitude;
+    
     CLLocationDegrees currentLatitude, currentLongitude;
-
-	for (CLLocation *currentLocation in locations)
+    
+    for (CLLocation *currentLocation in locations)
     {
         currentLatitude = currentLocation.coordinate.latitude;
         currentLongitude = currentLocation.coordinate.longitude;
-
+        
         // POIs outside of the world...
         if (currentLatitude < kRMMinLatitude || currentLatitude > kRMMaxLatitude || currentLongitude < kRMMinLongitude || currentLongitude > kRMMaxLongitude)
             continue;
-
-		max.latitude  = fmax(currentLatitude, max.latitude);
-		max.longitude = fmax(currentLongitude, max.longitude);
-		min.latitude  = fmin(currentLatitude, min.latitude);
-		min.longitude = fmin(currentLongitude, min.longitude);
-	}
-
+        
+        max.latitude  = fmax(currentLatitude, max.latitude);
+        max.longitude = fmax(currentLongitude, max.longitude);
+        min.latitude  = fmin(currentLatitude, min.latitude);
+        min.longitude = fmin(currentLongitude, min.longitude);
+    }
+    
     [self setBoundingBoxCoordinatesSouthWest:min northEast:max];
 }
 
