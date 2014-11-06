@@ -568,6 +568,10 @@
     {
         for (RMAnnotation *annotation in _annotations)
         {
+            if([annotation.annotationType isEqualToString:@"user"]){
+                [someArray addObject:annotation];
+                return;
+            }
             if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, annotation.projectedBoundingBox))
                 [someArray addObject:annotation];
         }
