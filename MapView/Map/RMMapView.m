@@ -1008,12 +1008,30 @@
 	normalizedProjectedPoint.x = centerProjectedPoint.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = centerProjectedPoint.y + fabs(planetBounds.origin.y);
 
-    [_mapScrollView setContentOffset:CGPointMake(normalizedProjectedPoint.x / _metersPerPixel - _mapScrollView.bounds.size.width/2.0,
-                                                _mapScrollView.contentSize.height - ((normalizedProjectedPoint.y / _metersPerPixel) + _mapScrollView.bounds.size.height/2.0))
+    
+    
+    
+    CGPoint point = CGPointMake(normalizedProjectedPoint.x / _metersPerPixel - _mapScrollView.bounds.size.width/2.0,
+                                _mapScrollView.contentSize.height - ((normalizedProjectedPoint.y / _metersPerPixel) + _mapScrollView.bounds.size.height/2.0));
+    
+    
+    if(point.y<0){
+        point.y = 0.2;
+    }
+    
+    if(point.y>_mapScrollView.contentSize.height-_mapScrollView.bounds.size.height){
+        point.y = _mapScrollView.contentSize.height-_mapScrollView.bounds.size.height;
+    }
+    
+    
+    
+    [_mapScrollView setContentOffset:point
                            animated:animated];
 
 //    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
 
+    
+    
     if ( ! animated)
         [self completeMoveEventAfterDelay:0];
 
